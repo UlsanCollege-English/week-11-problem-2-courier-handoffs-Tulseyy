@@ -25,4 +25,43 @@ def bfs_path(graph, s, t):
     7) Debug with prints (locally).
     8) Optimize: state O(V+E) in README.
     """
-    raise NotImplementedError
+    # Pseudocode:
+    # 1. Validate inputs: s and t must be in graph. If equal, return [s].
+    # 2. Use a deque for BFS queue. Track visited set and parent map.
+    # 3. Standard BFS: pop node, check neighbors, mark visited and set parent.
+    # 4. Stop when we find t. If found, reconstruct path from t to s via parent.
+    # 5. If BFS completes without finding t, return None.
+
+    # Input validation
+    if graph is None:
+        return None
+    if s == t:
+        # If s equals t, ensure node exists in graph per spec
+        return [s] if s in graph else None
+    if s not in graph or t not in graph:
+        return None
+
+    queue = deque([s])
+    visited = {s}
+    parent = {s: None}
+
+    while queue:
+        node = queue.popleft()
+        # iterate neighbors (graph is expected to be a mapping node -> iterable of neighbors)
+        for nbr in graph.get(node, []):
+            if nbr not in visited:
+                visited.add(nbr)
+                parent[nbr] = node
+                if nbr == t:
+                    # reconstruct path
+                    path = [t]
+                    cur = t
+                    while parent[cur] is not None:
+                        cur = parent[cur]
+                        path.append(cur)
+                    path.reverse()
+                    return path
+                queue.append(nbr)
+
+    # t not reachable from s
+    return None
